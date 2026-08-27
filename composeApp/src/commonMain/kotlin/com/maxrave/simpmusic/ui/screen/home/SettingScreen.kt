@@ -102,6 +102,8 @@ import com.maxrave.common.SponsorBlockType
 import com.maxrave.common.VIDEO_QUALITY
 import com.maxrave.domain.extension.now
 import com.maxrave.domain.data.model.lyrics.RomanizationLanguage
+import com.maxrave.domain.echobrain.EchoBrainArtistDiversity
+import com.maxrave.domain.echobrain.EchoBrainQueueContinuity
 import com.maxrave.domain.manager.DataStoreManager
 import com.maxrave.domain.manager.DataStoreManager.Values.TRUE
 import com.maxrave.domain.repository.ImportProgress
@@ -173,6 +175,21 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import simpmusic.composeapp.generated.resources.Res
+import simpmusic.composeapp.generated.resources.echo_brain
+import simpmusic.composeapp.generated.resources.echo_brain_alternative_versions
+import simpmusic.composeapp.generated.resources.echo_brain_alternative_versions_off
+import simpmusic.composeapp.generated.resources.echo_brain_alternative_versions_on
+import simpmusic.composeapp.generated.resources.echo_brain_artist_diversity
+import simpmusic.composeapp.generated.resources.echo_brain_artist_diversity_balanced
+import simpmusic.composeapp.generated.resources.echo_brain_artist_diversity_high
+import simpmusic.composeapp.generated.resources.echo_brain_artist_diversity_unlimited
+import simpmusic.composeapp.generated.resources.echo_brain_description
+import simpmusic.composeapp.generated.resources.echo_brain_enabled_description
+import simpmusic.composeapp.generated.resources.echo_brain_queue_continuity
+import simpmusic.composeapp.generated.resources.echo_brain_queue_continuity_dominant
+import simpmusic.composeapp.generated.resources.echo_brain_queue_continuity_mix
+import simpmusic.composeapp.generated.resources.echo_brain_similarity
+import simpmusic.composeapp.generated.resources.echo_brain_similarity_description
 import simpmusic.composeapp.generated.resources.about_us
 import simpmusic.composeapp.generated.resources.add_an_account
 import simpmusic.composeapp.generated.resources.ai
@@ -493,6 +510,11 @@ fun SettingScreen(
     val keepYoutubePlaylistOffline by viewModel.keepYouTubePlaylistOffline.collectAsStateWithLifecycle()
     val localTrackingEnabled by viewModel.localTrackingEnabled.collectAsStateWithLifecycle(initialValue = false)
     val blogNotificationEnabled by viewModel.blogNotificationEnabled.collectAsStateWithLifecycle()
+    val echoBrainEnabled by viewModel.echoBrainEnabled.collectAsStateWithLifecycle()
+    val echoBrainMinimumSimilarity by viewModel.echoBrainMinimumSimilarity.collectAsStateWithLifecycle()
+    val echoBrainAlternativeVersions by viewModel.echoBrainAlternativeVersions.collectAsStateWithLifecycle()
+    val echoBrainArtistDiversity by viewModel.echoBrainArtistDiversity.collectAsStateWithLifecycle()
+    val echoBrainQueueContinuity by viewModel.echoBrainQueueContinuity.collectAsStateWithLifecycle()
     val combineLocalAndYouTubeLiked by viewModel.combineLocalAndYouTubeLiked.collectAsStateWithLifecycle()
     val playVideo by remember { viewModel.playVideoInsteadOfAudio.map { it == TRUE } }.collectAsStateWithLifecycle(initialValue = false)
     val radioAudioOnly by remember { viewModel.radioAudioOnly.map { it == TRUE } }.collectAsStateWithLifecycle(initialValue = false)
@@ -1318,6 +1340,125 @@ fun SettingScreen(
                     subtitle = stringResource(Res.string.save_last_played_track_and_queue),
                     switch = (saveLastPlayed to { viewModel.setSaveLastPlayed(it) }),
                 )
+                SettingItem(
+                    title = stringResource(Res.string.echo_brain),
+                    subtitle = stringResource(Res.string.echo_brain_enabled_description),
+                    smallSubtitle = true,
+                    switch = (echoBrainEnabled to { viewModel.setEchoBrainEnabled(it) }),
+                )
+                AnimatedVisibility(visible = echoBrainEnabled) {
+                    Column {
+                        SettingItem(
+                            title = stringResource(Res.string.echo_brain_similarity),
+                            subtitle = stringResource(
+                                Res.string.echo_brain_similarity_description,
+                                echoBrainMinimumSimilarity,
+                            ),
+                            smallSubtitle = true,
+                            onClick = {
+                                viewModel.setAlertData(
+                                    SettingAlertState(
+                                        title = runBlocking { getString(Res.string.echo_brain_similarity) },
+                                        selectOne =
+                                            SettingAlertState.SelectData(
+                                                listSelect =
+                                                    listOf(90, 80, 70, 60).map { value ->
+                                                        (echoBrainMinimumSimilarity == value) to "$value%"
+                                                    },
+                                            ),
+                                        confirm = runBlocking { getString(Res.string.change) } to { state ->
+                                            state.selectOne
+                                                ?.getSelected()
+                                                ?.removeSuffix("%")
+                                                ?.toIntOrNull()
+                                                ?.let(viewModel::setEchoBrainMinimumSimilarity)
+                                        },
+                                        dismiss = runBlocking { getString(Res.string.cancel) },
+                                    ),
+                                )
+                            },
+                        )
+                        SettingItem(
+                            title = stringResource(Res.string.echo_brain_alternative_versions),
+                            subtitle =
+                                stringResource(
+                                    if (echoBrainAlternativeVersions) {
+                                        Res.string.echo_brain_alternative_versions_on
+                                    } else {
+                                        Res.string.echo_brain_alternative_versions_off
+                                    },
+                                ),
+                            smallSubtitle = true,
+                            switch = (
+                                echoBrainAlternativeVersions to
+                                    { viewModel.setEchoBrainAlternativeVersions(it) }
+                            ),
+                        )
+                        SettingItem(
+                            title = stringResource(Res.string.echo_brain_artist_diversity),
+                            subtitle =
+                                stringResource(
+                                    when (echoBrainArtistDiversity) {
+                                        EchoBrainArtistDiversity.UNLIMITED -> Res.string.echo_brain_artist_diversity_unlimited
+                                        EchoBrainArtistDiversity.BALANCED -> Res.string.echo_brain_artist_diversity_balanced
+                                        EchoBrainArtistDiversity.HIGH -> Res.string.echo_brain_artist_diversity_high
+                                    },
+                                ),
+                            onClick = {
+                                viewModel.setAlertData(
+                                    SettingAlertState(
+                                        title = runBlocking { getString(Res.string.echo_brain_artist_diversity) },
+                                        selectOne =
+                                            SettingAlertState.SelectData(
+                                                listSelect =
+                                                    EchoBrainArtistDiversity.entries.map { diversity ->
+                                                        (echoBrainArtistDiversity == diversity) to diversity.name
+                                                    },
+                                            ),
+                                        confirm = runBlocking { getString(Res.string.change) } to { state ->
+                                            EchoBrainArtistDiversity.entries
+                                                .firstOrNull { it.name == state.selectOne?.getSelected() }
+                                                ?.let(viewModel::setEchoBrainArtistDiversity)
+                                        },
+                                        dismiss = runBlocking { getString(Res.string.cancel) },
+                                    ),
+                                )
+                            },
+                        )
+                        SettingItem(
+                            title = stringResource(Res.string.echo_brain_queue_continuity),
+                            subtitle =
+                                stringResource(
+                                    if (echoBrainQueueContinuity == EchoBrainQueueContinuity.DOMINANT) {
+                                        Res.string.echo_brain_queue_continuity_dominant
+                                    } else {
+                                        Res.string.echo_brain_queue_continuity_mix
+                                    },
+                                ),
+                            smallSubtitle = true,
+                            onClick = {
+                                viewModel.setAlertData(
+                                    SettingAlertState(
+                                        title = runBlocking { getString(Res.string.echo_brain_queue_continuity) },
+                                        selectOne =
+                                            SettingAlertState.SelectData(
+                                                listSelect =
+                                                    EchoBrainQueueContinuity.entries.map { continuity ->
+                                                        (echoBrainQueueContinuity == continuity) to continuity.name
+                                                    },
+                                            ),
+                                        confirm = runBlocking { getString(Res.string.change) } to { state ->
+                                            EchoBrainQueueContinuity.entries
+                                                .firstOrNull { it.name == state.selectOne?.getSelected() }
+                                                ?.let(viewModel::setEchoBrainQueueContinuity)
+                                        },
+                                        dismiss = runBlocking { getString(Res.string.cancel) },
+                                    ),
+                                )
+                            },
+                        )
+                    }
+                }
                 if (getPlatform() == Platform.Android) {
                     SettingItem(
                         title = stringResource(Res.string.kill_service_on_exit),

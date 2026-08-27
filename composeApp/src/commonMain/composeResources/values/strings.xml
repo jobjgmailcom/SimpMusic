@@ -759,4 +759,20 @@
     <string name="share_lyrics_background">Background</string>
     <string name="share_lyrics_permission_denied">Storage permission is needed to save the image</string>
     <string name="share_lyrics_no_lyrics">This song has no lyrics to share</string>
+    <!-- Echo Brain: local automatic queue curation -->
+    <string name="echo_brain">Echo Brain</string>
+    <string name="echo_brain_description">Local automatic related-song queue</string>
+    <string name="echo_brain_enabled_description">Insert selected related tracks after the song playing now</string>
+    <string name="echo_brain_similarity">Minimum similarity</string>
+    <string name="echo_brain_similarity_description">Only candidates matching at least %1$d%% are inserted</string>
+    <string name="echo_brain_alternative_versions">Alternative versions</string>
+    <string name="echo_brain_alternative_versions_on">Remixes, live and acoustic versions are allowed</string>
+    <string name="echo_brain_alternative_versions_off">Only the main recording is allowed</string>
+    <string name="echo_brain_artist_diversity">Artist diversity</string>
+    <string name="echo_brain_artist_diversity_unlimited">Unlimited</string>
+    <string name="echo_brain_artist_diversity_balanced">Balanced</string>
+    <string name="echo_brain_artist_diversity_high">High</string>
+    <string name="echo_brain_queue_continuity">Queue continuity</string>
+    <string name="echo_brain_queue_continuity_dominant">Prioritize Echo Brain when a filtered candidate is available</string>
+    <string name="echo_brain_queue_continuity_mix">Preserve more of the original queue</string>
 </resources>

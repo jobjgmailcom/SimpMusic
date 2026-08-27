@@ -12,6 +12,10 @@ import com.maxrave.common.VIDEO_QUALITY
 import com.maxrave.domain.data.entities.DownloadState
 import com.maxrave.domain.data.entities.GoogleAccountEntity
 import com.maxrave.domain.data.player.GenericCastState
+import com.maxrave.domain.echobrain.EchoBrainArtistDiversity
+import com.maxrave.domain.echobrain.EchoBrainPreferences
+import com.maxrave.domain.echobrain.EchoBrainQueueContinuity
+import com.maxrave.domain.echobrain.EchoBrainSettings
 import com.maxrave.domain.extension.toNetScapeString
 import com.maxrave.domain.manager.DataStoreManager
 import com.maxrave.domain.mediaservice.handler.DownloadHandler
@@ -159,6 +163,16 @@ class SettingsViewModel(
     val crossfadeSkipAlbum: StateFlow<Boolean> = _crossfadeSkipAlbum
     private val _autoDownloadLikedSongs = MutableStateFlow<Boolean>(false)
     val autoDownloadLikedSongs: StateFlow<Boolean> = _autoDownloadLikedSongs
+    private val _echoBrainEnabled = MutableStateFlow(true)
+    val echoBrainEnabled: StateFlow<Boolean> = _echoBrainEnabled
+    private val _echoBrainMinimumSimilarity = MutableStateFlow(EchoBrainSettings.DEFAULT_MINIMUM_SIMILARITY)
+    val echoBrainMinimumSimilarity: StateFlow<Int> = _echoBrainMinimumSimilarity
+    private val _echoBrainAlternativeVersions = MutableStateFlow(false)
+    val echoBrainAlternativeVersions: StateFlow<Boolean> = _echoBrainAlternativeVersions
+    private val _echoBrainArtistDiversity = MutableStateFlow(EchoBrainArtistDiversity.BALANCED)
+    val echoBrainArtistDiversity: StateFlow<EchoBrainArtistDiversity> = _echoBrainArtistDiversity
+    private val _echoBrainQueueContinuity = MutableStateFlow(EchoBrainQueueContinuity.DOMINANT)
+    val echoBrainQueueContinuity: StateFlow<EchoBrainQueueContinuity> = _echoBrainQueueContinuity
     private val _youtubeSubtitleLanguage = MutableStateFlow<String>("")
     val youtubeSubtitleLanguage: StateFlow<String> = _youtubeSubtitleLanguage
 
@@ -305,6 +319,7 @@ class SettingsViewModel(
         getCrossfadeDjMode()
         getCrossfadeSkipAlbum()
         getAutoDownloadLikedSongs()
+        getEchoBrainSettings()
         getContributorNameAndEmail()
         getBackupDownloaded()
         getUpdateChannel()
@@ -347,6 +362,60 @@ class SettingsViewModel(
             dataStoreManager.setLocalTrackingEnabled(enabled)
             getLocalTrackingEnabled()
         }
+    }
+
+    private fun getEchoBrainSettings() {
+        viewModelScope.launch {
+            _echoBrainEnabled.value =
+                dataStoreManager.getString(EchoBrainPreferences.ENABLED).first()?.toBooleanStrictOrNull() ?: true
+            _echoBrainMinimumSimilarity.value =
+                dataStoreManager
+                    .getString(EchoBrainPreferences.MINIMUM_SIMILARITY)
+                    .first()
+                    ?.toIntOrNull()
+                    ?.takeIf { it in setOf(60, 70, 80, 90) }
+                    ?: EchoBrainSettings.DEFAULT_MINIMUM_SIMILARITY
+            _echoBrainAlternativeVersions.value =
+                dataStoreManager.getString(EchoBrainPreferences.ALLOW_ALTERNATIVE_VERSIONS).first()?.toBooleanStrictOrNull() ?: false
+            _echoBrainArtistDiversity.value =
+                dataStoreManager
+                    .getString(EchoBrainPreferences.ARTIST_DIVERSITY)
+                    .first()
+                    ?.let { value -> EchoBrainArtistDiversity.entries.firstOrNull { it.name == value } }
+                    ?: EchoBrainArtistDiversity.BALANCED
+            _echoBrainQueueContinuity.value =
+                dataStoreManager
+                    .getString(EchoBrainPreferences.QUEUE_CONTINUITY)
+                    .first()
+                    ?.let { value -> EchoBrainQueueContinuity.entries.firstOrNull { it.name == value } }
+                    ?: EchoBrainQueueContinuity.DOMINANT
+        }
+    }
+
+    fun setEchoBrainEnabled(enabled: Boolean) {
+        _echoBrainEnabled.value = enabled
+        viewModelScope.launch { dataStoreManager.putString(EchoBrainPreferences.ENABLED, enabled.toString()) }
+    }
+
+    fun setEchoBrainMinimumSimilarity(similarity: Int) {
+        if (similarity !in setOf(60, 70, 80, 90)) return
+        _echoBrainMinimumSimilarity.value = similarity
+        viewModelScope.launch { dataStoreManager.putString(EchoBrainPreferences.MINIMUM_SIMILARITY, similarity.toString()) }
+    }
+
+    fun setEchoBrainAlternativeVersions(enabled: Boolean) {
+        _echoBrainAlternativeVersions.value = enabled
+        viewModelScope.launch { dataStoreManager.putString(EchoBrainPreferences.ALLOW_ALTERNATIVE_VERSIONS, enabled.toString()) }
+    }
+
+    fun setEchoBrainArtistDiversity(diversity: EchoBrainArtistDiversity) {
+        _echoBrainArtistDiversity.value = diversity
+        viewModelScope.launch { dataStoreManager.putString(EchoBrainPreferences.ARTIST_DIVERSITY, diversity.name) }
+    }
+
+    fun setEchoBrainQueueContinuity(continuity: EchoBrainQueueContinuity) {
+        _echoBrainQueueContinuity.value = continuity
+        viewModelScope.launch { dataStoreManager.putString(EchoBrainPreferences.QUEUE_CONTINUITY, continuity.name) }
     }
 
     private fun getBlogNotificationEnabled() {
