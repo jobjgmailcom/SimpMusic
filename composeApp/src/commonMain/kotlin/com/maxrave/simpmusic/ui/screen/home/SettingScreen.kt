@@ -185,6 +185,8 @@ import simpmusic.composeapp.generated.resources.echo_brain_queue_continuity_domi
 import simpmusic.composeapp.generated.resources.echo_brain_queue_continuity_mix
 import simpmusic.composeapp.generated.resources.echo_brain_similarity
 import simpmusic.composeapp.generated.resources.echo_brain_similarity_description
+import simpmusic.composeapp.generated.resources.echo_brain_status
+import simpmusic.composeapp.generated.resources.echo_brain_status_ready
 import simpmusic.composeapp.generated.resources.about_us
 import simpmusic.composeapp.generated.resources.add_an_account
 import simpmusic.composeapp.generated.resources.ai
@@ -478,6 +480,7 @@ fun SettingScreen(
     val echoBrainAlternativeVersions by viewModel.echoBrainAlternativeVersions.collectAsStateWithLifecycle()
     val echoBrainArtistDiversity by viewModel.echoBrainArtistDiversity.collectAsStateWithLifecycle()
     val echoBrainQueueContinuity by viewModel.echoBrainQueueContinuity.collectAsStateWithLifecycle()
+    val echoBrainDiagnostic by viewModel.echoBrainDiagnostic.collectAsStateWithLifecycle()
     val combineLocalAndYouTubeLiked by viewModel.combineLocalAndYouTubeLiked.collectAsStateWithLifecycle()
     val playVideo by remember { viewModel.playVideoInsteadOfAudio.map { it == TRUE } }.collectAsStateWithLifecycle(initialValue = false)
     val videoQuality by viewModel.videoQuality.collectAsStateWithLifecycle()
@@ -1126,6 +1129,11 @@ fun SettingScreen(
                 )
                 AnimatedVisibility(visible = echoBrainEnabled) {
                     Column {
+                        SettingItem(
+                            title = stringResource(Res.string.echo_brain_status),
+                            subtitle = echoBrainDiagnostic ?: stringResource(Res.string.echo_brain_status_ready),
+                            smallSubtitle = true,
+                        )
                         SettingItem(
                             title = stringResource(Res.string.echo_brain_similarity),
                             subtitle = stringResource(

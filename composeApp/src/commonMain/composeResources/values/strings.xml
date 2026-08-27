@@ -681,4 +681,6 @@
     <string name="echo_brain_queue_continuity">Queue continuity</string>
     <string name="echo_brain_queue_continuity_dominant">Prioritize Echo Brain when a filtered candidate is available</string>
     <string name="echo_brain_queue_continuity_mix">Preserve more of the original queue</string>
+    <string name="echo_brain_status">Echo Brain status</string>
+    <string name="echo_brain_status_ready">Ready. Start or change a song to check related candidates.</string>
 </resources>

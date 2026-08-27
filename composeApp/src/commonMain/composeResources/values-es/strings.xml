@@ -602,4 +602,6 @@
     <string name="echo_brain_queue_continuity">Continuidad de cola</string>
     <string name="echo_brain_queue_continuity_dominant">Prioriza Echo Brain si hay una candidata filtrada disponible</string>
     <string name="echo_brain_queue_continuity_mix">Conserva una mayor parte de la cola original</string>
+    <string name="echo_brain_status">Estado de Echo Brain</string>
+    <string name="echo_brain_status_ready">Listo. Inicia o cambia una canción para buscar candidatas relacionadas.</string>
 </resources>

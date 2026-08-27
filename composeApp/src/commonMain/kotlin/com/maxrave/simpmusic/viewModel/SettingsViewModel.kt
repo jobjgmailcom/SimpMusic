@@ -157,6 +157,8 @@ class SettingsViewModel(
     val echoBrainArtistDiversity: StateFlow<EchoBrainArtistDiversity> = _echoBrainArtistDiversity
     private val _echoBrainQueueContinuity = MutableStateFlow(EchoBrainQueueContinuity.DOMINANT)
     val echoBrainQueueContinuity: StateFlow<EchoBrainQueueContinuity> = _echoBrainQueueContinuity
+    private val _echoBrainDiagnostic = MutableStateFlow<String?>(null)
+    val echoBrainDiagnostic: StateFlow<String?> = _echoBrainDiagnostic
     private val _youtubeSubtitleLanguage = MutableStateFlow<String>("")
     val youtubeSubtitleLanguage: StateFlow<String> = _youtubeSubtitleLanguage
 
@@ -348,7 +350,7 @@ class SettingsViewModel(
     private fun getEchoBrainSettings() {
         viewModelScope.launch {
             _echoBrainEnabled.value =
-                dataStoreManager.getString(EchoBrainPreferences.ENABLED).first()?.toBooleanStrictOrNull() ?: true
+                dataStoreManager.getString(EchoBrainPreferences.ENABLED).first()?.toBooleanStrictOrNull() ?: false
             _echoBrainMinimumSimilarity.value =
                 dataStoreManager
                     .getString(EchoBrainPreferences.MINIMUM_SIMILARITY)
@@ -370,6 +372,8 @@ class SettingsViewModel(
                     .first()
                     ?.let { value -> EchoBrainQueueContinuity.entries.firstOrNull { it.name == value } }
                     ?: EchoBrainQueueContinuity.DOMINANT
+            _echoBrainDiagnostic.value =
+                dataStoreManager.getString(EchoBrainPreferences.LAST_DIAGNOSTIC).first()
         }
     }
 
