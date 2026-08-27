@@ -23,6 +23,12 @@ La configuración se guarda en `DataStoreManager` del dispositivo. El historial 
 
 El cierre reportado al iniciar una canción se aisló en el análisis de un historial local vacío: una línea sin separador podía solicitar una subcadena de longitud negativa. El lector ahora descarta líneas inválidas antes de tratarlas y las rutas de recomendación capturan fallos no cancelables, continúan con la radio normal de SimpMusic y registran el motivo. Por tanto, Echo Brain no puede impedir el arranque ordinario del reproductor si su ciclo falla.
 
+## Ejecución remota verificable
+
+La ejecución [33034392414 de GitHub Actions](https://github.com/jobjgmailcom/SimpMusic/actions/runs/33034392414) terminó correctamente para el commit `87114cef`. Ejecutó las pruebas `:domain:jvmTest`, ensambló `:androidApp:assembleDebug` con Java 21, sin daemon y un trabajador, y publicó el artefacto FOSS sin secretos.
+
+La APK universal descargada de dicha ejecución se comprobó de forma independiente: paquete `com.maxrave.simpmusic.dev`, versión `1.7.0-dev`/`56`, firma v2 válida, ABIs `arm64-v8a`, `armeabi-v7a` y `x86_64`, y SHA-256 `35f8c10e00e544ec5ab3096ecf31ca04c35e2d8fd6ccbf66434071e04870cc3a`. El examen DEX no encontró Firebase, Google Play Services, Sentry ni el endpoint real de Last.fm.
+
 ## Límite de validación
 
 Una compilación y las pruebas no pueden probar las respuestas futuras de YouTube Music ni la reproducción real en cada teléfono. La CI compila y audita el APK sin secretos; la prueba en dispositivo debe confirmar que una canción normal inicia, que Echo Brain agrega candidatas sólo al activarlo y que desactivarlo conserva el comportamiento habitual.
