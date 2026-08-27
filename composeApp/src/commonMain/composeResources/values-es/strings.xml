@@ -586,4 +586,20 @@
     <string name="import_result_skipped">Se omitieron %1$d entradas porque su canción no estaba en el archivo.</string>
     <string name="import_failed">Error en la importación</string>
     <string name="import_invalid_file">Este archivo no es un archivo de importación válido de SimpMusic. Convierte tu biblioteca en simpmusic.org primero.</string>
+    <!-- Echo Brain: curaduría local y automática de cola -->
+    <string name="echo_brain">Echo Brain</string>
+    <string name="echo_brain_description">Cola automática local de canciones relacionadas</string>
+    <string name="echo_brain_enabled_description">Inserta canciones relacionadas seleccionadas después de la que está sonando</string>
+    <string name="echo_brain_similarity">Similitud mínima</string>
+    <string name="echo_brain_similarity_description">Sólo se insertan candidatas que alcancen %1$d%%</string>
+    <string name="echo_brain_alternative_versions">Versiones alternativas</string>
+    <string name="echo_brain_alternative_versions_on">Se permiten remixes, en vivo y acústicas</string>
+    <string name="echo_brain_alternative_versions_off">Sólo se permite la grabación principal</string>
+    <string name="echo_brain_artist_diversity">Diversidad de artistas</string>
+    <string name="echo_brain_artist_diversity_unlimited">Sin límite</string>
+    <string name="echo_brain_artist_diversity_balanced">Equilibrada</string>
+    <string name="echo_brain_artist_diversity_high">Alta</string>
+    <string name="echo_brain_queue_continuity">Continuidad de cola</string>
+    <string name="echo_brain_queue_continuity_dominant">Prioriza Echo Brain si hay una candidata filtrada disponible</string>
+    <string name="echo_brain_queue_continuity_mix">Conserva una mayor parte de la cola original</string>
 </resources>
