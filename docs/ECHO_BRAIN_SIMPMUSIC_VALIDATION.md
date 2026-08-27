@@ -4,10 +4,10 @@
 
 | Elemento | Resultado |
 | --- | --- |
-| Base | SimpMusic estable `v1.7.0` (`5dc8736b`), con el submódulo `jobjgmailcom/core` `284f807`. |
+| Base | SimpMusic estable `v1.7.0` (`5dc8736b`), con el submódulo `jobjgmailcom/core` `890f696`. |
 | Planificador | Pruebas JVM correctas para repetición, variantes, umbrales y gatillos. |
 | Android | `:androidApp:assembleDebug` correcto con Java 21, Android API 37, `--no-daemon` y un trabajador. |
-| Paquete | `com.maxrave.simpmusic.dev`, versión `1.7.0-dev`/`57`. |
+| Paquete | `com.maxrave.simpmusic.dev`, versión `1.7.0-dev`/`58`. |
 | Firma | Esquema APK v2 correcto mediante la firma debug reproducible de Android. |
 | ABI | `arm64-v8a`, `armeabi-v7a`, `x86_64`. |
 | Telemetría | No hay Firebase, Google Play Services ni Sentry en DEX. |
@@ -25,9 +25,9 @@ El cierre reportado al iniciar una canción se aisló en el análisis de un hist
 
 ## Ejecución remota verificable
 
-La ejecución [33040845429 de GitHub Actions](https://github.com/jobjgmailcom/SimpMusic/actions/runs/33040845429) terminó correctamente para el commit `05da15ea`. Ejecutó las pruebas `:domain:jvmTest`, ensambló `:androidApp:assembleDebug` con Java 21, sin daemon y un trabajador, y publicó el artefacto FOSS sin secretos. Incluye el disparador al cargar una cola, al cambiar de pista y al encender Echo Brain, por lo que ya no depende de Cola infinita ni de que queden menos de tres canciones.
+La ejecución [33044189772 de GitHub Actions](https://github.com/jobjgmailcom/SimpMusic/actions/runs/33044189772) terminó correctamente para el commit `aea9ff53`. Ejecutó las pruebas `:domain:jvmTest`, ensambló `:androidApp:assembleDebug` con Java 21, sin daemon y un trabajador, y publicó el artefacto FOSS sin secretos. Corrige una discrepancia: Ajustes podía mostrar Echo Brain activo cuando la preferencia real no existía y el servicio, por seguridad, lo mantenía desactivado. Ahora ambos usan el mismo valor, el ciclo se inicia al cargar una cola, cambiar de pista o encender el interruptor, y Ajustes muestra el estado de búsqueda, inserción o filtrado.
 
-La APK universal descargada de dicha ejecución se comprobó de forma independiente: paquete `com.maxrave.simpmusic.dev`, versión `1.7.0-dev`/`57`, firma v2 válida, ABIs `arm64-v8a`, `armeabi-v7a` y `x86_64`, y SHA-256 `317df1aed7e4e787e0f3e5b6dc8b6b68a72ce0436c9d12898ab820087899b625`. El examen DEX no encontró Firebase, Google Play Services, Sentry ni el endpoint real de Last.fm.
+La APK universal descargada de dicha ejecución se comprobó de forma independiente: paquete `com.maxrave.simpmusic.dev`, versión `1.7.0-dev`/`58`, firma v2 válida, ABIs `arm64-v8a`, `armeabi-v7a` y `x86_64`, y SHA-256 `ffbc2da654a5536c8327f0e6f7dd406d04e0c52507728859cd470036819f1406`. El examen DEX no encontró Firebase, Google Play Services, Sentry ni el endpoint real de Last.fm.
 
 ## Límite de validación
 
